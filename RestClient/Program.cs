@@ -25,13 +25,25 @@ namespace RestClient
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                 Console.WriteLine("GET");
-                HttpResponseMessage response = await client.GetAsync("api/Person/6");
+                HttpResponseMessage response = await client.GetAsync("api/Person/4");
                 if (response.IsSuccessStatusCode)
                 {
                     string result=await response.Content.ReadAsStringAsync();
                     Person person = new Person();
                     //person = JsonConvert.DeserializeObject<Person>(result);
                     Console.WriteLine(result);
+                }
+
+                response = await client.GetAsync("api/Person");
+                if (response.IsSuccessStatusCode)
+                {
+                    string personLit = await response.Content.ReadAsStringAsync();
+                    List<Person> personList = JsonConvert.DeserializeObject<List<Person>>(personLit);
+                   // Console.WriteLine("ID\tFirst NamE\tLast Name\tStart Date\tEnd Date");
+                    for (int i = 0; i < personList.Count; i++)
+                    {
+                        Console.WriteLine($"{personList[i].ID}\t{personList[i].FirstName}\t{personList[i].LastName}\t{personList[i].StartDate.ToLongDateString()}\t{personList[i].EndDate.ToLongDateString()}");
+                    }
                 }
             }
         }
