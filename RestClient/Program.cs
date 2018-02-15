@@ -23,9 +23,10 @@ namespace RestClient
                 client.BaseAddress = new Uri("http://localhost:49702/");
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
+                HttpResponseMessage response;
                 Console.WriteLine("GET");
-                HttpResponseMessage response = await client.GetAsync("api/Person/4");
+                int id = Convert.ToInt32(Console.ReadLine());
+                response = await client.GetAsync($"api/Person/{id}");
                 if (response.IsSuccessStatusCode)
                 {
                     string result=await response.Content.ReadAsStringAsync();
@@ -34,6 +35,7 @@ namespace RestClient
                     Console.WriteLine(result);
                 }
 
+                Console.WriteLine("Get all");
                 response = await client.GetAsync("api/Person");
                 if (response.IsSuccessStatusCode)
                 {
@@ -44,6 +46,24 @@ namespace RestClient
                     {
                         Console.WriteLine($"{personList[i].ID}\t{personList[i].FirstName}\t{personList[i].LastName}\t{personList[i].StartDate.ToLongDateString()}\t{personList[i].EndDate.ToLongDateString()}");
                     }
+                }
+
+                Console.WriteLine("Post");
+                Person p = new Person()
+                {
+                    ID = Convert.ToInt32(Console.ReadLine()),
+                    FirstName = Console.ReadLine(),
+                    LastName = Console.ReadLine(),
+                    PayRate = Convert.ToDouble(Console.ReadLine()),
+                    StartDate = Convert.ToDateTime(Console.ReadLine()),
+                    EndDate = Convert.ToDateTime(Console.ReadLine())
+                }; 
+          
+                 response = await client.PostAsJsonAsync("api/Person/", p);
+                if (response.IsSuccessStatusCode)
+                {
+                    Uri personUri = response.Headers.Location;
+                    Console.WriteLine(personUri);
                 }
             }
         }
